@@ -2,6 +2,10 @@
 
 A complete finance management system with role-based access control, built with Next.js, TypeScript, PostgreSQL, and Prisma.
 
+
+ **Live Demo:**  
+[View Live Project](https://finance-backend-steel.vercel.app/)
+
 ## Features
 
 - **Authentication**: JWT-based auth with bcrypt password hashing
