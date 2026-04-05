@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
         email,
         name,
         passwordHash,
-        role: 'VIEWER',
+         role: body.role || 'VIEWER',
         isActive: true,
       },
     });
