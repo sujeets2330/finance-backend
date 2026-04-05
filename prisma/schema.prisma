@@ -1,0 +1,68 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String     @id @default(cuid())
+  email         String     @unique
+  name          String
+  passwordHash  String
+  role          Role       @default(VIEWER)
+  isActive      Boolean    @default(true)
+  lastLogin     DateTime?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  deletedAt     DateTime?  
+
+  records       FinancialRecord[]
+
+  @@index([email])
+  @@index([role])
+}
+
+model FinancialRecord {
+  id            String     @id @default(cuid())
+  userId        String
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  amount        Decimal    @db.Decimal(12, 2) // Precise decimal for financial calculations
+  type          RecordType
+  category      String
+  description   String
+  date          DateTime
+  status        RecordStatus @default(PENDING)
+  
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  deletedAt     DateTime?  // Soft delete for audit trail
+
+  @@index([userId])
+  @@index([type])
+  @@index([date])
+  @@index([status])
+}
+
+enum Role {
+  VIEWER   // Can only view their own data
+  ANALYST  // Can view and edit records
+  ADMIN    // Full access
+}
+
+enum RecordType {
+  INCOME
+  EXPENSE
+}
+
+enum RecordStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
+}
